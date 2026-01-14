@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Valentine</title>
+<style>
+body {
+    margin: 0;
+    height: 100vh;
+    background: #0b1220;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: monospace;
+    color: #e5e7eb;
+    overflow: hidden;
+}
+#container { text-align:center; width:100%; max-width:600px; }
+#question { font-size: 22px; margin-bottom: 25px; }
+#buttons { display:flex; justify-content:center; align-items:center; gap:30px; margin-top:20px; transition: all 0.4s ease; }
+button { border:none; border-radius:12px; cursor:pointer; transition: all 0.4s ease; font-size:24px; padding:16px 28px; display:flex; justify-content:center; align-items:center; overflow:hidden; }
+#yesBtn { background: #22c55e; color:black; width:120px; height:50px; }
+#noBtn { background: #ef4444; color:black; width:120px; height:50px; }
+#message { margin-top:20px; min-height:24px; }
+.fullscreen { position:fixed; inset:0; width:100vw !important; height:100vh !important; font-size:48px; border-radius:0; z-index:10; }
+.heart { position:absolute; font-size:26px; color:#fb7185; animation: float 3s linear forwards; }
+@keyframes float { from {transform:translateY(0); opacity:1;} to {transform:translateY(-160px); opacity:0;} }
+.cat { position:absolute; bottom:60px; width:200px; transition: all 1s ease; }
+.left-cat { left:10%; } .right-cat { right:10%; }
+.hug-left { left:38%; } .hug-right { right:38%; }
+</style>
+</head>
+<body>
+
+<div id="container">
+    <div id="question">Would you like to be my Valentine?</div>
+    <div id="buttons">
+        <button id="yesBtn" onclick="sayYes()">Yes</button>
+        <button id="noBtn" onclick="sayNo()">No</button>
+    </div>
+    <div id="message"></div>
+</div>
+
+<script>
+let noCount = 0;
+const messages = [
+    "Are you sure?",
+    "Really sure?",
+    "Are you positive?",
+    "Pookie please!!",
+    "Just think about it"
+];
+
+function sayNo() {
+    if(noCount>=5) return;
+
+    const yesBtn = document.getElementById("yesBtn");
+    const noBtn  = document.getElementById("noBtn");
+
+    // Show message
+    document.getElementById("message").textContent = messages[noCount];
+
+    // Yes grows
+    yesBtn.style.width  = 120 + noCount * 60 + "px";
+    yesBtn.style.height = 50  + noCount * 20 + "px";
+
+    // No shrinks but stays readable
+    const minWidth = 40;
+    const minHeight = 30;
+    noBtn.style.width  = `${Math.max(120 - noCount * 15, minWidth)}px`;
+    noBtn.style.height = `${Math.max(50  - noCount * 8, minHeight)}px`;
+
+    noCount++;
+
+    if(noCount===5){ 
+        noBtn.remove(); 
+        yesBtn.classList.add("fullscreen"); 
+        yesBtn.textContent="YES"; 
+    }
+}
+
+function sayYes() {
+    document.body.innerHTML = `
+        <div style="
+            position:fixed;
+            inset:0;
+            background:#0b1220;
+            display:flex;
+            flex-direction:column;
+            justify-content:center;
+            align-items:center;
+            color:#22c55e;
+            font-size:36px;
+            overflow:hidden;
+            text-align:center;
+            gap:20px;
+        ">
+            <div>I KNEW YOU WOULD SAY YES 💚</div>
+
+            <button onclick="goWhatsApp()" style="
+                margin-top:20px;
+                background:#22c55e;
+                color:black;
+                border:none;
+                border-radius:12px;
+                padding:18px 30px;
+                font-size:22px;
+                cursor:pointer;
+            ">
+                Continue 💬
+            </button>
+
+            <div class="cat left-cat" id="leftCat">
+                ${catSVG("#94a3b8", false)}
+            </div>
+
+            <div class="cat right-cat" id="rightCat">
+                ${catSVG("#fbbf24", true)}
+            </div>
+        </div>
+    `;
+
+    setTimeout(() => {
+        document.getElementById("leftCat").classList.add("hug-left");
+        document.getElementById("rightCat").classList.add("hug-right");
+    }, 300);
+
+    for (let i = 0; i < 30; i++) {
+        const h = document.createElement("div");
+        h.className = "heart";
+        h.textContent = "❤";
+        h.style.left = Math.random() * 100 + "vw";
+        h.style.bottom = "40px";
+        h.style.animationDelay = Math.random() * 1.5 + "s";
+        document.body.appendChild(h);
+    }
+}
+
+function goWhatsApp() {
+    const phone = "255710998608"; // your number
+    const message = encodeURIComponent("I said YES 💚");
+    window.location.href = `https://wa.me/${phone}?text=${message}`;
+}
+
+function catSVG(color,bow){return `<svg viewBox="0 0 300 300">
+  <ellipse cx="150" cy="200" rx="80" ry="60" fill="${color}"/>
+  <path d="M230 210 q40 20 10 60" stroke="${color}" stroke-width="18" fill="none" stroke-linecap="round"/>
+  <circle cx="150" cy="120" r="60" fill="${color}"/>
+  <polygon points="100,60 120,20 140,60" fill="${color}"/>
+  <polygon points="160,60 180,20 200,60" fill="${color}"/>
+  <circle cx="130" cy="120" r="6" fill="#000"/>
+  <circle cx="170" cy="120" r="6" fill="#000"/>
+  <polygon points="150,135 145,145 155,145" fill="#000"/>
+  <path d="M150 145 q-10 10 -20 0" stroke="#000" fill="none"/>
+  <path d="M150 145 q10 10 20 0" stroke="#000" fill="none"/>
+  <line x1="90" y1="130" x2="130" y2="130" stroke="#000"/>
+  <line x1="90" y1="140" x2="130" y2="140" stroke="#000"/>
+  <line x1="170" y1="130" x2="210" y2="130" stroke="#000"/>
+  <line x1="170" y1="140" x2="210" y2="140" stroke="#000"/>
+  ${bow?`<circle cx="185" cy="95" r="6" fill="#fb7185"/>
+  <polygon points="170,95 185,85 185,105" fill="#fb7185"/>
+  <polygon points="200,95 185,85 185,105" fill="#fb7185"/>`:``}
+</svg>`;}
+</script>
+</body>
+</html>
